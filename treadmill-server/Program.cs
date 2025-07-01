@@ -1,16 +1,42 @@
+using System.Security.AccessControl;
+using DotNetEnv;
+using Microsoft.EntityFrameworkCore;
+using treadmill_server.Contexts;
+Env.Load();
 var builder = WebApplication.CreateBuilder(args);
+
+var connectionString = builder.Configuration.GetValue<string>("DEFAULT_CONNECTION_STRING");
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+// TODO Swagger
+
+
+
+builder.Services.AddDbContext<ITreadmillEfCoreContext, TreadmillEfCoreContext>(options =>
+    options.UseNpgsql(connectionString));
+
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ITreadmillEfCoreContext>();
+
+    if (!dbContext.Database.CanConnect())
+    {
+        throw new NotImplementedException("Can't connect to database!");
+    }
+}
+
 
 app.UseHttpsRedirection();
 
