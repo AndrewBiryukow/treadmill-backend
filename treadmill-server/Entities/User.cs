@@ -1,3 +1,4 @@
+
 namespace treadmill_server.Entities;
 
 public class User
@@ -6,6 +7,9 @@ public class User
     
     public string Name { get; set; }
     
+    public string Username { get; set; }
+    
     public string Status { get; set; }
     
+    public ICollection<FitnessMachine> FitnessMachines { get; set; }
 }

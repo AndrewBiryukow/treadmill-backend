@@ -7,6 +7,7 @@ namespace treadmill_server.Contexts;
 public interface ITreadmillEfCoreContext
 {
     DbSet<User> Users { get; set; }
+    DbSet<FitnessMachine> FitnessMachines { get; set; }
     
     DatabaseFacade Database { get; }
 
