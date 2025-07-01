@@ -1,0 +1,6 @@
+@treadmill_server_HostAddress = http://localhost:5130
+
+GET {{treadmill_server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
