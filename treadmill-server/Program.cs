@@ -2,20 +2,43 @@ using System.Security.AccessControl;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using treadmill_server.Contexts;
+using treadmill_server.Data.Abstract;
+using treadmill_server.Data.Concrete;
+using treadmill_server.Services;
+
 Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetValue<string>("DEFAULT_CONNECTION_STRING");
 
+// TODO Swagger http://localhost:5130/swagger/index.html
+
+// TODO Challenge - Period(StartedAt-EndedAt), ChallengeType(?), SubEntity(Goals - Image,Title,ShortDesc, Status(?)) Condition(), 
+
+//TODO Workout (Workouts in Schema)-(Logs) - StartedAt-EndedAt
+
+// TODO RecommendationController (?)
+
+// TODO AdminPanelController (?)
 
 // https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
-
-// TODO Swagger http://localhost:5130/swagger/index.html
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<FitnessMachineService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<WorkoutService>();
+builder.Services.AddScoped<ChallengeService>();
+builder.Services.AddScoped<GoalService>();
+
+builder.Services.AddScoped<IChallengeRepository, ChallengeRepository>();
+builder.Services.AddScoped<IWorkoutRepository,WorkoutRepository>();
+builder.Services.AddScoped<IGoalRepository, GoalRepository>();
+builder.Services.AddScoped<IFitnessMachineRepository, FitnessMachineRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
 
 
 
@@ -73,7 +96,6 @@ app.MapGet("/weatherforecast", () =>
     })
     .WithName("GetWeatherForecast");
 
-app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {

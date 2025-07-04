@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using treadmill_server.Data.Concrete;
+using treadmill_server.Entities;
 
 namespace treadmill_server.Configurations;
 

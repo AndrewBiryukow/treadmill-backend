@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using treadmill_server.Contexts;
-using treadmill_server.Entities;
-
+using treadmill_server.DTO;
+using treadmill_server.Services;
 
 namespace treadmill_server.Controllers;
 
@@ -10,40 +8,40 @@ namespace treadmill_server.Controllers;
 [Route("api/[controller]")]
 public class FitnessMachinesController : ControllerBase
 {
-    private readonly TreadmillEfCoreContext _context;
+    private readonly FitnessMachineService _fitnessMachineService;
 
-    public FitnessMachinesController(TreadmillEfCoreContext context)
+    public FitnessMachinesController(FitnessMachineService fitnessMachineService)
     {
-        _context = context;
+        _fitnessMachineService = fitnessMachineService;
     }
 
-    // GET: api/fitnessmachines
+
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<FitnessMachine>>> GetFitnessMachines()
+    public async Task<ActionResult<IEnumerable<FitnessMachineDto>>> GetFitnessMachines()
     {
-        return await _context.FitnessMachines.ToListAsync();
-    }
-    
-    // GET: api/fitnessmachines/byuser/5
-    [HttpGet("byuser/{userId}")]
-    public async Task<ActionResult<IEnumerable<FitnessMachine>>> GetFitnessMachinesByUser(int userId)
-    {
-        return await _context.FitnessMachines.Where(fm => fm.UserId == userId).ToListAsync();
+        var machines = await _fitnessMachineService.GetAllAsync();
+        return Ok(machines);
     }
 
-    // POST: api/fitnessmachines
-    [HttpPost]
-    public async Task<ActionResult<FitnessMachine>> PostFitnessMachine(FitnessMachine fitnessMachine)
+
+    [HttpGet("byuser/{userId}")]
+    public async Task<ActionResult<IEnumerable<FitnessMachineDto>>> GetFitnessMachinesByUser(int userId)
     {
-        var userExists = await _context.Users.AnyAsync(u => u.Id == fitnessMachine.UserId);
-        if (!userExists)
+        var machines = await _fitnessMachineService.GetByUserIdAsync(userId);
+        return Ok(machines);
+    }
+
+
+    [HttpPost]
+    public async Task<ActionResult<FitnessMachineDto>> CreateFitnessMachine(CreateFitnessMachineDto createDto)
+    {
+        var newMachineDto = await _fitnessMachineService.CreateAsync(createDto);
+
+        if (newMachineDto == null)
         {
-            return BadRequest($"User with Id {fitnessMachine.UserId} not found.");
+            return BadRequest($"User with Id {createDto.UserId} not found.");
         }
         
-        _context.FitnessMachines.Add(fitnessMachine);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetFitnessMachines), new { id = fitnessMachine.Id }, fitnessMachine);
+        return CreatedAtAction(nameof(GetFitnessMachines), new { id = newMachineDto.Id }, newMachineDto);
     }
 }

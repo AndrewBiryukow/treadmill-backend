@@ -8,19 +8,20 @@ public class FitnessMachine
     
     public string Name { get; set; }
     
-    public string Status { get; set; }
-    
-    public int HeartRate { get; set; }
-    
-    public int StepCount { get; set; }
-    
-    public double DistanceTraveled { get; set; }
-    
-    public int CalorieExpenditure { get; set; }
+
+    public int HeartRate { get; set; } = 0;
+
+    public int StepCount { get; set; } = 0;
+
+    public double DistanceTraveled { get; set; } = 0;
+
+    public int CalorieExpenditure { get; set; } = 0;
     
     public FitnessMachineType DeviceType { get; set; }
     
     public int UserId { get; set; }
     
     public User User { get; set; }
+    
+    public ICollection<Challenge>? Challenges { get; set; }
 }
