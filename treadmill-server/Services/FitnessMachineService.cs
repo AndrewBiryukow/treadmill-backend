@@ -20,7 +20,7 @@ public class FitnessMachineService
     public async Task<IEnumerable<FitnessMachineDto>> GetAllAsync()
     {
         var machines = await _machineRepository.GetAllAsync();
-        // Виконуємо мапінг з сутності в DTO
+        
         return machines.Select(m => new FitnessMachineDto(m.Id, m.Name, m.DeviceType, m.UserId));
     }
 

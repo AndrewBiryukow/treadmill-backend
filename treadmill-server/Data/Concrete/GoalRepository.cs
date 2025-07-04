@@ -14,7 +14,7 @@ public class GoalRepository : IGoalRepository
         _context = context;
     }
 
-    public async Task<Goal?> GetByIdAsync(int id) // Змінено на int
+    public async Task<Goal?> GetByIdAsync(int id) 
     {
         return await _context.Goals.FindAsync(id);
     }

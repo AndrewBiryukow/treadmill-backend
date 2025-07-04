@@ -1,4 +1,4 @@
-// Controllers/ChallengeController.cs
+
 using Microsoft.AspNetCore.Mvc;
 using treadmill_server.DTO;
 using treadmill_server.Services;

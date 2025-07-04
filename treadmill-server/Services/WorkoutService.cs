@@ -28,7 +28,6 @@ public class WorkoutService
             UserId = startDto.UserId,
             FitnessMachineId = startDto.FitnessMachineId,
             StartTimeUtc = DateTime.UtcNow,
-            // EndTimeUtc, TraveledDistance, CalorieExpenditure залишаються за замовчуванням
         };
 
         _context.Workouts.Add(workout);
