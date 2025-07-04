@@ -2,16 +2,43 @@ using System.Security.AccessControl;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using treadmill_server.Contexts;
+using treadmill_server.Data.Abstract;
+using treadmill_server.Data.Concrete;
+using treadmill_server.Services;
+
 Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetValue<string>("DEFAULT_CONNECTION_STRING");
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// TODO Swagger http://localhost:5130/swagger/index.html
 
-// TODO Swagger
+// TODO Challenge - Period(StartedAt-EndedAt), ChallengeType(?), SubEntity(Goals - Image,Title,ShortDesc, Status(?)) Condition(), 
+
+//TODO Workout (Workouts in Schema)-(Logs) - StartedAt-EndedAt
+
+// TODO RecommendationController (?)
+
+// TODO AdminPanelController (?)
+
+// https://aka.ms/aspnet/openapi
+builder.Services.AddOpenApi();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<FitnessMachineService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<WorkoutService>();
+builder.Services.AddScoped<ChallengeService>();
+builder.Services.AddScoped<GoalService>();
+
+builder.Services.AddScoped<IChallengeRepository, ChallengeRepository>();
+builder.Services.AddScoped<IWorkoutRepository,WorkoutRepository>();
+builder.Services.AddScoped<IGoalRepository, GoalRepository>();
+builder.Services.AddScoped<IFitnessMachineRepository, FitnessMachineRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
 
 
 
@@ -21,8 +48,6 @@ builder.Services.AddDbContext<ITreadmillEfCoreContext, TreadmillEfCoreContext>(o
 var app = builder.Build();
 
 
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -38,12 +63,24 @@ using (var scope = app.Services.CreateScope())
 }
 
 
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();
 
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
+
+
 
 app.MapGet("/weatherforecast", () =>
     {
@@ -59,9 +96,9 @@ app.MapGet("/weatherforecast", () =>
     })
     .WithName("GetWeatherForecast");
 
-app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+
