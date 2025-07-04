@@ -40,7 +40,7 @@ public class UserService
     public async Task<IEnumerable<User>> GetAllUsersAsync()
     {
         return await _context.Users
-                             .Include(u => u.FitnessMachines) // Включаємо пов'язані дані
+                             .Include(u => u.FitnessMachines) 
                              .ToListAsync();
     }
 

@@ -36,7 +36,7 @@ public class GoalService
             ImagePath = goalDto.ImagePath,
             Condition = goalDto.Condition,
             ConditionValue = goalDto.ConditionValue,
-            Status = GoalStatus.Active // Статус за замовчуванням
+            Status = GoalStatus.Active 
         };
 
         await _goalRepository.AddAsync(newGoal);
