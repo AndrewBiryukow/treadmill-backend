@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using treadmill_server.Entities.Enums;
 
 namespace treadmill_server.Entities;
@@ -5,23 +7,21 @@ namespace treadmill_server.Entities;
 public class FitnessMachine
 {
     public int Id { get; set; }
+    public int UserId { get; set; }
+    [MaxLength(256)]
+    public required string DeviceLocalId { get; set; }
     
-    public string Name { get; set; }
-    
-
-    public int HeartRate { get; set; } = 0;
-
-    public int StepCount { get; set; } = 0;
-
-    public double DistanceTraveled { get; set; } = 0;
-
-    public int CalorieExpenditure { get; set; } = 0;
+    [MaxLength(64)] 
+    public required string Name { get; set; }
     
     public FitnessMachineType DeviceType { get; set; }
     
-    public int UserId { get; set; }
+   // public User User { get; set; }
     
-    public User User { get; set; }
+    public DateTime CreatedAt { get; set; }
     
-    public ICollection<Challenge>? Challenges { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    
+    public Collection<Workout> Workouts { get; set; }
+    
 }

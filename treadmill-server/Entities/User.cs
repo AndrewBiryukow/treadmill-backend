@@ -14,9 +14,11 @@ public class User
 
     public string Username { get; set; }
 
-    public UserStatus Status { get; set; } = UserStatus.New;
+    public UserStatus Status { get; set; }
 
     public ICollection<FitnessMachine>? FitnessMachines { get; set; }
     
-    public ICollection<Challenge>? Challenges { get; set; }
+    public ICollection<Workout> Workouts { get; set; }
+    
+   // public ICollection<Challenge>? Challenges { get; set; }
 }
