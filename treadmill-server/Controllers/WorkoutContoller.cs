@@ -1,11 +1,7 @@
-
 using Microsoft.AspNetCore.Mvc;
 using treadmill_server.DTO;
-using treadmill_server.Services;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using treadmill_server.DTO;
 using treadmill_server.Entities;
+using treadmill_server.Services;
 
 namespace treadmill_server.Controllers;
 
@@ -20,26 +16,12 @@ public class WorkoutController : ControllerBase
         _workoutService = workoutService;
     }
 
-
-    [HttpPost("start")]
-    public async Task<IActionResult> StartWorkout([FromBody] StartWorkoutDto startDto)
+    [HttpPost]
+    public async Task<IActionResult> CreateWorkout([FromBody] CreateWorkoutDto createDto)
     {
-        var newWorkout = await _workoutService.StartWorkoutAsync(startDto);
-        return Ok(newWorkout);
+        var newWorkout = await _workoutService.CreateWorkoutAsync(createDto);
+        return CreatedAtAction(nameof(GetWorkout), new { id = newWorkout.Id }, newWorkout);
     }
-
-
-    [HttpPost("{id}/end")]
-    public async Task<IActionResult> EndWorkout(int id, [FromBody] EndWorkoutDto endDto)
-    {
-        var endedWorkout = await _workoutService.EndWorkoutAsync(id, endDto);
-        if (endedWorkout == null)
-        {
-            return NotFound("Workout not found or already completed.");
-        }
-        return Ok(endedWorkout);
-    }
-
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetWorkout(int id)
@@ -51,7 +33,6 @@ public class WorkoutController : ControllerBase
         }
         return Ok(workout);
     }
-
 
     [HttpGet("user/{userId}")]
     public async Task<ActionResult<IEnumerable<Workout>>> GetUserWorkouts(int userId)

@@ -30,12 +30,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<FitnessMachineService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<WorkoutService>();
-builder.Services.AddScoped<ChallengeService>();
-builder.Services.AddScoped<GoalService>();
+// builder.Services.AddScoped<ChallengeService>();
+// builder.Services.AddScoped<GoalService>();
 
-builder.Services.AddScoped<IChallengeRepository, ChallengeRepository>();
+// builder.Services.AddScoped<IChallengeRepository, ChallengeRepository>();
 builder.Services.AddScoped<IWorkoutRepository,WorkoutRepository>();
-builder.Services.AddScoped<IGoalRepository, GoalRepository>();
+// builder.Services.AddScoped<IGoalRepository, GoalRepository>();
 builder.Services.AddScoped<IFitnessMachineRepository, FitnessMachineRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
@@ -43,7 +43,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 
 builder.Services.AddDbContext<ITreadmillEfCoreContext, TreadmillEfCoreContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionString)
+        .UseSnakeCaseNamingConvention());
 
 var app = builder.Build();
 

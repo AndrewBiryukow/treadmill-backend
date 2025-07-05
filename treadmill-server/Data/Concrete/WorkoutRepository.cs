@@ -14,6 +14,12 @@ public class WorkoutRepository : IWorkoutRepository
         _context = context;
     }
 
+    public async Task AddAsync(Workout workout)
+    {
+        await _context.Workouts.AddAsync(workout);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task<Workout?> GetByIdAsync(int id)
     {
         return await _context.Workouts.FindAsync(id);
@@ -25,10 +31,5 @@ public class WorkoutRepository : IWorkoutRepository
             .Where(w => w.UserId == userId)
             .ToListAsync();
     }
-
-    public async Task AddAsync(Workout workout)
-    {
-        await _context.Workouts.AddAsync(workout);
-        await _context.SaveChangesAsync();
-    }
+    
 }

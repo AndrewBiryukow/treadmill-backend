@@ -1,19 +1,22 @@
 namespace treadmill_server.DTO;
 
-using System;
-
-
-public record StartWorkoutDto(int UserId, int FitnessMachineId);
-
-
-public record EndWorkoutDto(int TraveledDistance, int CalorieExpenditure);
-
 public record WorkoutDto(
-    int Id,
-    int UserId,
-    int FitnessMachineId,
-    DateTime StartTimeUtc,
-    DateTime? EndTimeUtc,
-    int TraveledDistance,
-    int CalorieExpenditure
+    int Id, 
+    int UserId, 
+    int FitnessMachineId, 
+    DateTime CreatedAt, 
+    int Time,
+    int Distance, 
+    int Calories
 );
+
+public record CreateWorkoutDto(
+    int UserId, 
+    int FitnessMachineId, 
+    DateTime CreatedAt,
+    int Distance, 
+    int Calories,
+    int Time
+);
+
+

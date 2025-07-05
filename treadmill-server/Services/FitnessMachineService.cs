@@ -43,7 +43,8 @@ public class FitnessMachineService
         {
             Name = dto.Name,
             DeviceType = dto.DeviceType,
-            UserId = dto.UserId
+            UserId = dto.UserId,
+            DeviceLocalId = dto.DeviceLocalId
         };
 
         await _machineRepository.AddAsync(newMachine);

@@ -7,12 +7,14 @@ public class Workout
     public int UserId { get; set; }
     
     public int FitnessMachineId { get; set; }
+
+    public int Distance { get; set; } = 0;
     
-    public int TraveledDistance { get; set; }
+    public int Calories { get; set; } = 0;
     
-    public int CalorieExpenditure { get; set; } 
+    public int Time { get; set; }
     
-    public DateTime StartTimeUtc { get; set; }
+    public DateTime CreatedAt { get; set; }
     
-    public DateTime? EndTimeUtc { get; set; }
+    
 }
