@@ -30,13 +30,39 @@ public class TreadmillEfCoreContext(DbContextOptions<TreadmillEfCoreContext> opt
         // .HasForeignKey(w => w.UserId);
         //   .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<User>()
-            .Property(u => u.Status)
-            .HasDefaultValue(UserStatus.New);
+
+        modelBuilder.Entity<FitnessMachine>(entity =>
+        {
+            entity.Property(ft => ft.DeviceType)
+                .HasDefaultValue(FitnessMachineType.Unknown);
+            entity.Property(ft => ft.CreatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(ft => ft.UpdatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+        });
+           
+        modelBuilder.Entity<FitnessMachine>()
+            .HasMany(ft => ft.Workouts) 
+            .WithOne()            
+            .HasForeignKey(w => w.FitnessMachineId); 
         
-        modelBuilder.Entity<Workout>()
-            .Property(w => w.CreatedAt)
+        modelBuilder.Entity<User>(entity => 
+            entity.Property(u => u.Status)
+            .HasDefaultValue(UserStatus.New));
+            
+
+        modelBuilder.Entity<Workout>(entity =>
+        {
+            entity.Property(w => w.CreatedAt)
             .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(w => w.Calories)
+                .HasDefaultValue(0);
+            entity.Property(w => w.Distance)
+                .HasDefaultValue(0);
+            entity.Property(w => w.Time)
+                .HasDefaultValue(0);
+        });
+            
 
             modelBuilder.Entity<User>()
                 .HasMany(u => u.Workouts) 
@@ -44,10 +70,7 @@ public class TreadmillEfCoreContext(DbContextOptions<TreadmillEfCoreContext> opt
                 .HasForeignKey(w => w.UserId); 
       
             
-            modelBuilder.Entity<FitnessMachine>()
-                .HasMany(ft => ft.Workouts) 
-                .WithOne()            
-                .HasForeignKey(w => w.FitnessMachineId); 
+
             /*modelBuilder.Entity<FitnessMachine>()
                 .HasMany(ft => ft.) 
                 .WithOne()               
