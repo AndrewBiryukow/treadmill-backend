@@ -8,13 +8,12 @@ public class Workout
     
     public int FitnessMachineId { get; set; }
 
-    public int Distance { get; set; } = 0;
+    public int Distance { get; set; }
     
-    public int Calories { get; set; } = 0;
+    public int Calories { get; set; }
     
     public int Time { get; set; }
     
     public DateTime CreatedAt { get; set; }
-    
     
 }
