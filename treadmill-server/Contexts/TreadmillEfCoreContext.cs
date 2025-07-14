@@ -41,6 +41,18 @@ public class TreadmillEfCoreContext(DbContextOptions<TreadmillEfCoreContext> opt
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
            
+        modelBuilder.Entity<Workout>(entity =>
+        {
+            entity.Property(w => w.CreatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(w => w.Calories)
+                .HasDefaultValue(0);
+            entity.Property(w => w.Distance)
+                .HasDefaultValue(0);
+            entity.Property(w => w.Time)
+                .HasDefaultValue(0);
+        });
+        
         modelBuilder.Entity<FitnessMachine>()
             .HasMany(ft => ft.Workouts) 
             .WithOne()            
@@ -50,24 +62,24 @@ public class TreadmillEfCoreContext(DbContextOptions<TreadmillEfCoreContext> opt
             entity.Property(u => u.Status)
             .HasDefaultValue(UserStatus.New));
             
+        
 
-        modelBuilder.Entity<Workout>(entity =>
+        modelBuilder.Entity<User>(entity => 
         {
-            entity.Property(w => w.CreatedAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP");
-            entity.Property(w => w.Calories)
-                .HasDefaultValue(0);
-            entity.Property(w => w.Distance)
-                .HasDefaultValue(0);
-            entity.Property(w => w.Time)
-                .HasDefaultValue(0);
-        });
-            
+            entity.Property(u => u.Status).HasDefaultValue(UserStatus.New);
 
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.Workouts) 
-                .WithOne()            
-                .HasForeignKey(w => w.UserId); 
+
+            entity.HasMany(u => u.FitnessMachines)
+                .WithOne() 
+                .HasForeignKey(fm => fm.UserId)
+                .OnDelete(DeleteBehavior.Cascade); 
+
+
+            entity.HasMany(u => u.Workouts)
+                .WithOne() 
+                .HasForeignKey(w => w.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
       
             
 

@@ -36,9 +36,9 @@ namespace treadmill_server.Migrations
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     device_local_id = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    device_type = table.Column<int>(type: "integer", nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    device_type = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
                 {
@@ -59,9 +59,9 @@ namespace treadmill_server.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     fitness_machine_id = table.Column<int>(type: "integer", nullable: false),
-                    distance = table.Column<int>(type: "integer", nullable: false),
-                    calories = table.Column<int>(type: "integer", nullable: false),
-                    time = table.Column<int>(type: "integer", nullable: false),
+                    distance = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    calories = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    time = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>

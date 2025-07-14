@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using treadmill_server.Contexts;
 using treadmill_server.Data.Abstract;
@@ -26,11 +27,19 @@ public class FitnessMachineRepository : IFitnessMachineRepository
 
     public async Task<IEnumerable<FitnessMachine>> GetByUserIdAsync(int userId)
     {
-        return await _context.FitnessMachines
-            .Where(fm => fm.UserId == userId)
-            .ToListAsync();
+        return await _context.FitnessMachines.Where(fm => fm.UserId == userId).ToListAsync();
     }
-    
+    public async Task<FitnessMachine?> FindByDeviceLocalIdAsync(int userId, string deviceLocalId)
+    {
+        return await _context.FitnessMachines.FirstOrDefaultAsync(fm =>
+            fm.UserId == userId && fm.DeviceLocalId == deviceLocalId);
+    }
+
+    public async Task<bool> AnyAsync(Expression<Func<FitnessMachine, bool>> predicate)
+    {
+        return await _context.FitnessMachines.AnyAsync(predicate);
+    }
+
     public async Task AddAsync(FitnessMachine machine)
     {
         await _context.FitnessMachines.AddAsync(machine);
@@ -42,7 +51,7 @@ public class FitnessMachineRepository : IFitnessMachineRepository
         _context.FitnessMachines.Update(machine);
         await _context.SaveChangesAsync();
     }
-    
+
     public async Task DeleteAsync(int id)
     {
         var machine = await GetByIdAsync(id);

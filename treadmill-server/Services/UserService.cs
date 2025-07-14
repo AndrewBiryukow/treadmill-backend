@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using treadmill_server.Contexts;
+using treadmill_server.Data.Abstract;
+using treadmill_server.DTO;
 using treadmill_server.Entities;
 using treadmill_server.Utils; 
 using treadmill_server.Entities.Enums;
@@ -8,66 +10,62 @@ namespace treadmill_server.Services;
 
 public class UserService
 {
-    private readonly TreadmillEfCoreContext _context;
     private readonly Haikunator.Haikunator _haikunator;
     private readonly Random _random;
+    private readonly IUserRepository _userRepository;
 
-    public UserService(TreadmillEfCoreContext context)
+    
+    public UserService(IUserRepository userRepository)
     {
-        _context = context;
         _haikunator = new Haikunator.Haikunator();
         _random = new Random();
+        _userRepository = userRepository;
     }
     
-    public async Task<User> CreateUserAsync(string name)
+    public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
     {
-        string uniqueUsername = await GenerateUniqueUsernameAsync();
+        var users = await _userRepository.GetAllAsync();
+        return users.Select(u => new UserDto(u.Id, u.Name, u.Username, u.Status));
+    }
 
+    public async Task<UserDto?> GetUserByIdAsync(int id)
+    {
+        var user = await _userRepository.GetByIdAsync(id);
+        if (user == null) return null;
+        return new UserDto(user.Id, user.Name, user.Username, user.Status);
+    }
+
+    public async Task<UserDto> CreateUserAsync(CreateUserDto dto)
+    {
         var newUser = new User
         {
-            Name = name,
-            Username = uniqueUsername,
-            Status = UserStatus.New 
+            Name = dto.Name,
+            Username = await GenerateUniqueUsernameAsync(),
+            Status = UserStatus.New
         };
-
-        _context.Users.Add(newUser);
-        await _context.SaveChangesAsync();
-
-        return newUser;
+        await _userRepository.AddAsync(newUser);
+        return new UserDto(newUser.Id, newUser.Name, newUser.Username, newUser.Status);
     }
 
-
-    public async Task<IEnumerable<User>> GetAllUsersAsync()
+    public async Task<UserDto?> UpdateUserAsync(int id, UpdateUserDto dto)
     {
-        return await _context.Users
-                             .Include(u => u.FitnessMachines) 
-                             .ToListAsync();
+        var user = await _userRepository.GetByIdAsync(id);
+        if (user == null) return null;
+
+        user.Name = dto.Name;
+        user.Status = dto.Status;
+        await _userRepository.UpdateAsync(user);
+
+        return new UserDto(user.Id, user.Name, user.Username, user.Status);
     }
 
-
-    public async Task<User?> GetUserByIdAsync(int id)
+    public async Task<bool> DeleteUserAsync(int id)
     {
-        return await _context.Users
-                             .Include(u => u.FitnessMachines)
-                             .FirstOrDefaultAsync(u => u.Id == id);
-    }
+        var user = await _userRepository.GetByIdAsync(id);
+        if (user == null) return false;
 
-
-    public async Task<User?> UpdateUserAsync(User userToUpdate)
-    {
-        var existingUser = await _context.Users.FindAsync(userToUpdate.Id);
-        if (existingUser == null)
-        {
-            return null;
-        }
-        
-        existingUser.Name = userToUpdate.Name;
-        existingUser.Status = userToUpdate.Status;
-
-        _context.Users.Update(existingUser);
-        await _context.SaveChangesAsync();
-
-        return existingUser;
+        await _userRepository.DeleteAsync(id);
+        return true;
     }
 
 
@@ -80,13 +78,12 @@ public class UserService
             string formattedWords = StringUtils.FormatHaikuWords(baseWords);
             int token = _random.Next(1000, 10000);
             string candidateUsername = $"{formattedWords}_{token}";
+            
 
-            bool exists = await _context.Users.AnyAsync(u => u.Username == candidateUsername);
-
-            if (!exists)
-            {
-                return candidateUsername;
+            if (!await _userRepository.AnyAsync(u => u.Username == candidateUsername)){
+                return candidateUsername; 
             }
         }
     }
 }
+
