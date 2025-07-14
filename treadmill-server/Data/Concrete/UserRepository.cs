@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using treadmill_server.Contexts;
 using treadmill_server.Data.Abstract;
@@ -16,12 +17,26 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetByIdAsync(int id)
     {
-        return await _context.Users.FindAsync(id);
+        return await _context.Users
+            .Include(u => u.FitnessMachines) 
+            .FirstOrDefaultAsync(u => u.Id == id);
     }
     
     public async Task<IEnumerable<User>> GetAllAsync()
     {
-        return await _context.Users.ToListAsync();
+        return await _context.Users
+            .Include(u => u.FitnessMachines)
+            .ToListAsync();
+    }
+    
+    public async Task<User?> GetByUsernameAsync(string username)
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+    }
+    
+    public async Task<bool> AnyAsync(Expression<Func<User, bool>> predicate)
+    {
+        return await _context.Users.AnyAsync(predicate);
     }
 
     public async Task AddAsync(User user)
@@ -44,10 +59,5 @@ public class UserRepository : IUserRepository
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
         }
-    }
-
-    public async Task<User?> GetByUsernameAsync(string username)
-    {
-        return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
     }
 }

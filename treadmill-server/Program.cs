@@ -1,3 +1,4 @@
+/*
 using System.Security.AccessControl;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,7 @@ using treadmill_server.Services;
 
 Env.Load();
 var builder = WebApplication.CreateBuilder(args);
-
+var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var connectionString = builder.Configuration.GetValue<string>("DEFAULT_CONNECTION_STRING");
 
 // TODO Swagger http://localhost:5130/swagger/index.html
@@ -40,6 +41,18 @@ builder.Services.AddScoped<IFitnessMachineRepository, FitnessMachineRepository>(
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: myAllowSpecificOrigins,
+        policy  =>
+        {
+
+            policy.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
 
 
 builder.Services.AddDbContext<ITreadmillEfCoreContext, TreadmillEfCoreContext>(options =>
@@ -102,4 +115,80 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+
+*/
+
+using DotNetEnv;
+using Microsoft.EntityFrameworkCore;
+using treadmill_server.Contexts;
+using treadmill_server.Data.Abstract;
+using treadmill_server.Data.Concrete;
+using treadmill_server.Services;
+
+Env.Load();
+var builder = WebApplication.CreateBuilder(args);
+
+var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
+var connectionString = builder.Configuration.GetValue<string>("DEFAULT_CONNECTION_STRING");
+
+builder.Services.AddOpenApi();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<FitnessMachineService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<WorkoutService>();
+builder.Services.AddScoped<IWorkoutRepository,WorkoutRepository>();
+builder.Services.AddScoped<IFitnessMachineRepository, FitnessMachineRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: myAllowSpecificOrigins,
+        policy  =>
+        {
+            policy.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
+builder.Services.AddDbContext<ITreadmillEfCoreContext, TreadmillEfCoreContext>(options =>
+    options.UseNpgsql(connectionString)
+        .UseSnakeCaseNamingConvention());
+
+var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ITreadmillEfCoreContext>();
+    if (!dbContext.Database.CanConnect())
+    {
+        throw new InvalidOperationException("Can't connect to database!");
+    }
+}
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
+app.UseCors(myAllowSpecificOrigins);
+
+app.UseAuthorization();
+
+app.MapControllers();
+app.Run();
+
+
+record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+{
+    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+}
+
 

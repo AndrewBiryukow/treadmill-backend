@@ -12,7 +12,7 @@ using treadmill_server.Contexts;
 namespace treadmill_server.Migrations
 {
     [DbContext(typeof(TreadmillEfCoreContext))]
-    [Migration("20250705232455_initialMigration")]
+    [Migration("20250706133118_initialMigration")]
     partial class initialMigration
     {
         /// <inheritdoc />
@@ -35,8 +35,10 @@ namespace treadmill_server.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("DeviceLocalId")
                         .IsRequired()
@@ -45,7 +47,9 @@ namespace treadmill_server.Migrations
                         .HasColumnName("device_local_id");
 
                     b.Property<int>("DeviceType")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
+                        .HasDefaultValue(0)
                         .HasColumnName("device_type");
 
                     b.Property<string>("Name")
@@ -55,8 +59,10 @@ namespace treadmill_server.Migrations
                         .HasColumnName("name");
 
                     b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer")
@@ -112,7 +118,9 @@ namespace treadmill_server.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Calories")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
+                        .HasDefaultValue(0)
                         .HasColumnName("calories");
 
                     b.Property<DateTime>("CreatedAt")
@@ -122,7 +130,9 @@ namespace treadmill_server.Migrations
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("Distance")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
+                        .HasDefaultValue(0)
                         .HasColumnName("distance");
 
                     b.Property<int>("FitnessMachineId")
@@ -130,7 +140,9 @@ namespace treadmill_server.Migrations
                         .HasColumnName("fitness_machine_id");
 
                     b.Property<int>("Time")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
+                        .HasDefaultValue(0)
                         .HasColumnName("time");
 
                     b.Property<int>("UserId")
